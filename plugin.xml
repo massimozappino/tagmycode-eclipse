@@ -29,25 +29,74 @@
             file="contexts.xml">
       </contexts>
    </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.ui.IEditorInput"
+            nameFilter="*.*"
+            id="tagmycode-eclipse.contribution1">
+         <action
+               class="com.tagmycode.eclipse.popup.actions.AddSnippet"
+               enablesFor="1"
+               icon="icons/create16.png"
+               id="tagmycode-eclipse.addAction"
+               label="Add Snippet on TagMyCode..."
+               menubarPath="additions">
+         </action>
+          <action
+               class="com.tagmycode.eclipse.popup.actions.SearchSnippet"
+               enablesFor="1"
+               icon="icons/search16.png"
+               id="tagmycode-eclipse.searchAction"
+               label="Search Snippet on TagMyCode..."
+               menubarPath="tagmycode-eclipse.addAction"> </action>
+              
+      </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="tagmycode-eclipse.commands.category"
+            name="TagMyCode">
+      </category>
+      <command
+            categoryId="tagmycode-eclipse.commands.category"
+            id="tagmycode-eclipse.commands.showTagMyCodeWindow"
+            name="Show TagMyCode Window">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="com.tagmycode.eclipse.handlers.ShowTagMyCodeWindow"
+            commandId="tagmycode-eclipse.commands.showTagMyCodeWindow">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="tagmycode-eclipse.commands.showTagMyCodeWindow"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+6">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="tagmycode-eclipse.toolbars.tagMyCodeToolbar"
+               label="TagMyCode">
+            <command
+                  commandId="tagmycode-eclipse.commands.showTagMyCodeWindow"
+                  icon="icons/tagmycode.png"
+                  id="tagmycode-eclipse.toolbars.showTagMyCodeWindow"
+                  tooltip="Show TagMyCode Window">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
    
-<extension point="org.eclipse.ui.menus">
-  <menuContribution
-     locationURI="popup:#AbstractTextEditorRulerContext?after=QuickDiff.Toggle">
-     <command
-        commandId="org.eclipse.team.cvs.ui.showAnnotation"
-        label="XXXXXXXXXXX %ShowAnnotationAction.label"
-        style="push">
-        <visibleWhen
-           checkEnabled="false">
-           <with variable="activeEditorInput">
-              <test
-                 property="org.eclipse.team.internal.ccvs.ui.isManaged"
-                 value="true">
-              </test>
-           </with>
-        </visibleWhen>
-     </command>
-  </menuContribution>
-</extension>
    
 </plugin>

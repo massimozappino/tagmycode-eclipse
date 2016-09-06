@@ -1,20 +1,17 @@
-package com.tagmycode.eclipse;
+package com.tagmycode.eclipse.popup.actions;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-public class CreateSnippetAction implements IObjectActionDelegate {
+import com.tagmycode.eclipse.Activator;
+import com.tagmycode.plugin.Framework;
 
-	private Shell shell;
-	
-	/**
-	 * Constructor for Action1.
-	 */
-	public CreateSnippetAction() {
+public class SearchSnippet implements IObjectActionDelegate {
+
+	public SearchSnippet() {
 		super();
 	}
 
@@ -22,17 +19,14 @@ public class CreateSnippetAction implements IObjectActionDelegate {
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		shell = targetPart.getSite().getShell();
 	}
 
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		MessageDialog.openInformation(
-			shell,
-			"TagMyCode Eclipse",
-			"Add Snippet on TagMyCode... was executed.");
+		Framework framework = Activator.getDefault().getFramework();
+		framework.showSearchDialog(null);
 	}
 
 	/**
