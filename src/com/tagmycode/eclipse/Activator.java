@@ -66,7 +66,7 @@ public class Activator extends AbstractUIPlugin {
 	private void initFramework() {
 		Shell activeShell = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getShell();
-
+  
 		final FrameworkConfig frameworkConfig = new FrameworkConfig(
 				new PasswordKeyChain(), new Storage(), new MessageManager(
 						activeShell), new TaskFactory(), null);
