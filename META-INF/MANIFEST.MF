@@ -13,3 +13,4 @@ Bundle-ClassPath: lib/tagmycode-jar-with-dependencies.jar,
  .
 Import-Package: org.eclipse.jface.text,
  org.eclipse.ui.texteditor
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

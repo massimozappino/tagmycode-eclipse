@@ -1,18 +1,12 @@
 package com.tagmycode.eclipse;
 
-import java.io.IOException;
-
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import com.tagmycode.plugin.Framework;
-import com.tagmycode.plugin.FrameworkConfig;
-import com.tagmycode.sdk.authentication.TagMyCodeApiProduction;
-import com.tagmycode.sdk.exception.TagMyCodeException;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -44,14 +38,6 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-
-		initFramework();
-
-		try {
-			framework.start();
-		} catch (IOException | TagMyCodeException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	public void showTagMyCodeWindow() {
@@ -59,20 +45,8 @@ public class Activator extends AbstractUIPlugin {
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 					.getActivePage().showView(TagMyCodeView.ID);
 		} catch (PartInitException e) {
-			framework.manageTagMyCodeExceptions(new TagMyCodeException(e));
+			throw new RuntimeException(e);
 		}
-	}
-
-	private void initFramework() {
-		Shell activeShell = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getShell();
-  
-		final FrameworkConfig frameworkConfig = new FrameworkConfig(
-				new PasswordKeyChain(), new Storage(), new MessageManager(
-						activeShell), new TaskFactory(), null);
-		framework = new Framework(new TagMyCodeApiProduction(),
-				frameworkConfig, new Secret());
-
 	}
 
 	/*
@@ -109,7 +83,14 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	public Framework getFramework() {
+		if (framework == null) {
+			showTagMyCodeWindow();
+		}
 		return framework;
+	}
+
+	public void setFramework(Framework framework) {
+		this.framework = framework;
 	}
 
 }

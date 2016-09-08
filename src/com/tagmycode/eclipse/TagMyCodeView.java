@@ -1,11 +1,17 @@
 package com.tagmycode.eclipse;
 
 import java.awt.Frame;
+import java.io.IOException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
+
+import com.tagmycode.plugin.Framework;
+import com.tagmycode.plugin.FrameworkConfig;
+import com.tagmycode.sdk.authentication.TagMyCodeApiProduction;
+import com.tagmycode.sdk.exception.TagMyCodeException;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view
@@ -41,15 +47,31 @@ public class TagMyCodeView extends ViewPart {
 	 * it.
 	 */
 	public void createPartControl(Composite parent) {
-		extractFrame(parent).add(Activator.getDefault().getFramework().getMainFrame());
+		Frame frame = frameFromComposite(parent);
+		final FrameworkConfig frameworkConfig = new FrameworkConfig(
+				new PasswordKeyChain(), new Storage(), new MessageManager(
+						parent.getShell()), new TaskFactory(), frame);
+		Framework framework = new Framework(new TagMyCodeApiProduction(),
+				frameworkConfig, new Secret());
+
+		frame.removeAll();
+		frame.add(framework.getMainFrame());
+
+		try {
+			framework.start();
+		} catch (IOException | TagMyCodeException e) {
+			throw new RuntimeException(e);
+		}
+		Activator.getDefault().setFramework(framework);
+
 	}
 
-	private Frame extractFrame(Composite parent) {
+	private Frame frameFromComposite(Composite parent) {
 		Composite composite = new Composite(parent, SWT.EMBEDDED
 				| SWT.NO_BACKGROUND);
 		return SWT_AWT.new_Frame(composite);
 	}
-	
+
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */

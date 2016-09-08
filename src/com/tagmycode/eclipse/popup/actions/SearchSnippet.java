@@ -1,38 +1,51 @@
 package com.tagmycode.eclipse.popup.actions;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IActionDelegate;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.texteditor.ITextEditor;
 
-import com.tagmycode.eclipse.Activator;
-import com.tagmycode.plugin.Framework;
+import com.tagmycode.plugin.gui.IDocumentInsertText;
 
-public class SearchSnippet implements IObjectActionDelegate {
+public class SearchSnippet extends TagMyCodeAction {
 
 	public SearchSnippet() {
 		super();
 	}
 
-	/**
-	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
-	 */
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-	}
-
-	/**
-	 * @see IActionDelegate#run(IAction)
-	 */
 	public void run(IAction action) {
-		Framework framework = Activator.getDefault().getFramework();
-		framework.showSearchDialog(null);
+
+		final IEditorPart editorPart = getEditorPart();
+
+		getFramework().showSearchDialog(createDocumentInsertText(editorPart));
 	}
 
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-	}
+	private IDocumentInsertText createDocumentInsertText(
+			final IEditorPart editorPart) {
+		return new IDocumentInsertText() {
 
+			@Override
+			public void insertText(final String text) {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						ITextSelection iTextSelection = retrieveITextSelection(editorPart);
+						if (iTextSelection != null) {
+							ITextEditor ite = (ITextEditor) editorPart;
+							IDocument document = ite.getDocumentProvider()
+									.getDocument(ite.getEditorInput());
+							try {
+								document.replace(iTextSelection.getOffset(),
+										iTextSelection.getLength(), text);
+							} catch (BadLocationException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				});
+			}
+		};
+	}
 }
