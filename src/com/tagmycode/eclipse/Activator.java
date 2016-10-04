@@ -45,7 +45,7 @@ public class Activator extends AbstractUIPlugin {
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 					.getActivePage().showView(TagMyCodeView.ID);
 		} catch (PartInitException e) {
-			throw new RuntimeException(e);
+
 		}
 	}
 

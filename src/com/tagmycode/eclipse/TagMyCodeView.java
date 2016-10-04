@@ -1,7 +1,6 @@
 package com.tagmycode.eclipse;
 
 import java.awt.Frame;
-import java.io.IOException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
@@ -10,8 +9,9 @@ import org.eclipse.ui.part.ViewPart;
 
 import com.tagmycode.plugin.Framework;
 import com.tagmycode.plugin.FrameworkConfig;
+import com.tagmycode.plugin.gui.CenterLocation;
+import com.tagmycode.plugin.gui.CenterLocationType;
 import com.tagmycode.sdk.authentication.TagMyCodeApiProduction;
-import com.tagmycode.sdk.exception.TagMyCodeException;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view
@@ -39,7 +39,7 @@ public class TagMyCodeView extends ViewPart {
 	 * The constructor.
 	 */
 	public TagMyCodeView() {
-
+		CenterLocation.setCenterType(CenterLocationType.CENTER_SCREEN);
 	}
 
 	/**
@@ -59,11 +59,10 @@ public class TagMyCodeView extends ViewPart {
 
 		try {
 			framework.start();
-		} catch (IOException | TagMyCodeException e) {
-			throw new RuntimeException(e);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		Activator.getDefault().setFramework(framework);
-
 	}
 
 	private Frame frameFromComposite(Composite parent) {

@@ -38,7 +38,6 @@ public class Storage implements IStorage {
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
-			// TODO Auto-generated catch block
 			Activator.getDefault().getFramework().getMessageManager().error(e.getMessage());
 		}
 	}
