@@ -50,7 +50,7 @@ public class TagMyCodeView extends ViewPart {
 		Frame frame = frameFromComposite(parent);
 		final FrameworkConfig frameworkConfig = new FrameworkConfig(
 				new PasswordKeyChain(), new Storage(), new MessageManager(
-						parent.getShell()), new TaskFactory(), frame);
+						parent.getShell()), new TaskFactory(), new EclipseBrowser(parent.getDisplay()), frame);
 		Framework framework = new Framework(new TagMyCodeApiProduction(),
 				frameworkConfig, new Secret());
 
