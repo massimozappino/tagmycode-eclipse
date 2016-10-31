@@ -1,12 +1,36 @@
 package com.tagmycode.eclipse;
 
+import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
+import javax.swing.JApplet;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import com.eclipse.tagmycode.swtbridge.AwtEnvironment;
 import com.tagmycode.plugin.Framework;
 import com.tagmycode.plugin.FrameworkConfig;
 import com.tagmycode.plugin.gui.CenterLocation;
@@ -39,6 +63,7 @@ public class TagMyCodeView extends ViewPart {
 	 * The constructor.
 	 */
 	public TagMyCodeView() {
+		AwtEnvironment.getInstance(Display.getCurrent());
 		CenterLocation.setCenterType(CenterLocationType.CENTER_SCREEN);
 	}
 
@@ -46,29 +71,29 @@ public class TagMyCodeView extends ViewPart {
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
 	 */
-	public void createPartControl(Composite parent) {
-		Frame frame = frameFromComposite(parent);
-		final FrameworkConfig frameworkConfig = new FrameworkConfig(
-				new PasswordKeyChain(), new Storage(), new MessageManager(
-						parent.getShell()), new TaskFactory(), new EclipseBrowser(), frame);
-		Framework framework = new Framework(new TagMyCodeApiProduction(),
-				frameworkConfig, new Secret());
+	public void createPartControl(final Composite parent) {
+		final Frame frame = frameFromComposite(parent);
 
-		frame.removeAll();
+		final FrameworkConfig frameworkConfig = new FrameworkConfig(new PasswordKeyChain(), new Storage(),
+				new MessageManager(parent.getShell()), new TaskFactory(), new EclipseBrowser(), frame);
+
+		Framework framework = new Framework(new TagMyCodeApiProduction(), frameworkConfig, new Secret());
+
 		frame.add(framework.getMainFrame());
-
 		try {
 			framework.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		Activator.getDefault().setFramework(framework);
+
 	}
 
 	private Frame frameFromComposite(Composite parent) {
-		Composite composite = new Composite(parent, SWT.EMBEDDED
-				| SWT.NO_BACKGROUND);
-		return SWT_AWT.new_Frame(composite);
+		Composite composite = new Composite(parent, SWT.EMBEDDED | SWT.APPLICATION_MODAL);
+		Frame frame = SWT_AWT.new_Frame(composite);
+		return frame;
 	}
 
 	/**
@@ -76,4 +101,5 @@ public class TagMyCodeView extends ViewPart {
 	 */
 	public void setFocus() {
 	}
+
 }
