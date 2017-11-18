@@ -1,5 +1,8 @@
 package com.tagmycode.eclipse;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
@@ -15,11 +18,18 @@ public class MessageManager implements IMessageManager {
 		this.shell = shell;
 	}
 
-	public void error(final String message) {
+	@Override
+	public void errorLog(String message) {
+		IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, IStatus.ERROR, message, new Exception());
+		ILog log = Activator.getDefault().getLog();
+        log.log(status);
+	}
+
+	@Override
+	public void errorDialog(String message) {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR
-						| SWT.OK);
+				MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
 				dialog.setText("TagMyCode Error");
 				dialog.setMessage(message);
 				dialog.open();

@@ -1,7 +1,5 @@
 package com.tagmycode.eclipse;
 
-import com.tagmycode.plugin.IStorage;
-
 import java.io.IOException;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -9,7 +7,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 
 
-public class Storage implements IStorage {
+public class Storage {
 
     private IEclipsePreferences prefs;
 
@@ -17,18 +15,15 @@ public class Storage implements IStorage {
          prefs = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
     }
 
-    @Override
     public String read(String key) throws IOException {
         return prefs.get(key, "");
     }
 
-    @Override
     public void write(String key, String value) throws IOException {
     	prefs.put(key, value);
     	flush();
     }
 
-    @Override
     public void unset(String key) throws IOException {
         prefs.remove(key);
         flush();
@@ -38,7 +33,7 @@ public class Storage implements IStorage {
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
-			Activator.getDefault().getFramework().getMessageManager().error(e.getMessage());
+			Activator.getDefault().getFramework().getMessageManager().errorLog(e.getMessage());
 		}
 	}
 

@@ -19,12 +19,13 @@ public class SearchSnippet extends TagMyCodeAction {
 	public void run(IAction action) {
 
 		final IEditorPart editorPart = getEditorPart();
-
+        if (!getFramework().canOperate()) {
+            return;
+        }
 		getFramework().showSearchDialog(createDocumentInsertText(editorPart));
 	}
 
-	private IDocumentInsertText createDocumentInsertText(
-			final IEditorPart editorPart) {
+	private IDocumentInsertText createDocumentInsertText(final IEditorPart editorPart) {
 		return new IDocumentInsertText() {
 
 			@Override
@@ -34,11 +35,9 @@ public class SearchSnippet extends TagMyCodeAction {
 						ITextSelection iTextSelection = retrieveITextSelection(editorPart);
 						if (iTextSelection != null) {
 							ITextEditor ite = (ITextEditor) editorPart;
-							IDocument document = ite.getDocumentProvider()
-									.getDocument(ite.getEditorInput());
+							IDocument document = ite.getDocumentProvider().getDocument(ite.getEditorInput());
 							try {
-								document.replace(iTextSelection.getOffset(),
-										iTextSelection.getLength(), text);
+								document.replace(iTextSelection.getOffset(), iTextSelection.getLength(), text);
 							} catch (BadLocationException e) {
 								e.printStackTrace();
 							}

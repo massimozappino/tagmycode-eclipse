@@ -1,40 +1,23 @@
 package com.tagmycode.eclipse;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 
-import javax.swing.JApplet;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.window.Window;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import com.eclipse.tagmycode.swtbridge.AwtEnvironment;
+import com.tagmycode.plugin.gui.WindowType;
 import com.tagmycode.plugin.Framework;
 import com.tagmycode.plugin.FrameworkConfig;
 import com.tagmycode.plugin.gui.CenterLocation;
 import com.tagmycode.plugin.gui.CenterLocationType;
+import com.tagmycode.sdk.DbService;
+import com.tagmycode.sdk.SaveFilePath;
 import com.tagmycode.sdk.authentication.TagMyCodeApiProduction;
 
 /**
@@ -63,30 +46,30 @@ public class TagMyCodeView extends ViewPart {
 	 * The constructor.
 	 */
 	public TagMyCodeView() {
-		AwtEnvironment.getInstance(Display.getCurrent());
 		CenterLocation.setCenterType(CenterLocationType.CENTER_SCREEN);
 	}
 
 	/**
-	 * This is a callback that will allow us to create the viewer and initialize
-	 * it.
+	 * This is a callback that will allow us to create the viewer and initialize it.
 	 */
 	public void createPartControl(final Composite parent) {
-		final Frame frame = frameFromComposite(parent);
-
-		final FrameworkConfig frameworkConfig = new FrameworkConfig(new PasswordKeyChain(), new Storage(),
-				new MessageManager(parent.getShell()), new TaskFactory(), new EclipseBrowser(), frame);
-
-		Framework framework = new Framework(new TagMyCodeApiProduction(), frameworkConfig, new Secret());
-
-		frame.add(framework.getMainFrame());
 		try {
+			final Frame frame = frameFromComposite(parent);
+
+			DbService dbService = new DbService(new SaveFilePath(getOrCreateNamespace()));
+			WindowType.setDefaultType(WindowType.Type.JFRAME);
+			final FrameworkConfig frameworkConfig = new FrameworkConfig(new PasswordKeyChain(), dbService,
+					new MessageManager(parent.getShell()), new TaskFactory(), new EclipseBrowser(),
+					new EclipseVersion(), frame);
+
+			Framework framework = new Framework(new TagMyCodeApiProduction(), frameworkConfig, new Secret());
+
+			frame.add(framework.getMainFrame());
+
 			framework.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		Activator.getDefault().setFramework(framework);
 
 	}
 
@@ -102,4 +85,15 @@ public class TagMyCodeView extends ViewPart {
 	public void setFocus() {
 	}
 
+	private String getOrCreateNamespace() {
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
+		String profile = preferences.get("profile", "");
+		if (profile.length() == 0) {
+			SecureRandom random = new SecureRandom();
+			profile = new BigInteger(130, random).toString(32);
+			preferences.put("profile", profile);
+			Framework.LOGGER.info("profile id: " + profile);
+		}
+		return "eclipse-" + profile;
+	}
 }
