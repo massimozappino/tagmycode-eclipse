@@ -26,7 +26,7 @@ public class MessageManager implements IMessageManager {
 	}
 
 	@Override
-	public void errorDialog(String message) {
+	public void errorDialog(final String message) {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);

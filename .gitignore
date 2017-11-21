@@ -15,5 +15,6 @@ local.properties
 
 lib/
 target/
-
+update-site/**/*.jar
+update-site/*.jar
 Secret.java
