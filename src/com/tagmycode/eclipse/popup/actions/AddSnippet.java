@@ -19,10 +19,15 @@ public class AddSnippet extends TagMyCodeAction {
 		Snippet snippet = new Snippet();
 		snippet.setCode(getCode(editorPart));
 		snippet.setTitle(editorPart.getTitle());
+		if (getFramework() == null) {
+			System.out.println("NULLLLLL");
+			return;
+		}
         if (!getFramework().canOperate()) {
             return;
         }
 		getFramework().showSnippetDialog(snippet);
+
 	}
 
 	private String getCode(IEditorPart editorPart) {

@@ -63,7 +63,7 @@ public class TagMyCodeView extends ViewPart {
 					new EclipseVersion(), frame);
 
 			Framework framework = new Framework(new TagMyCodeApiProduction(), frameworkConfig, new Secret());
-
+			Activator.getDefault().setFramework(framework);
 			frame.add(framework.getMainFrame());
 
 			framework.start();
