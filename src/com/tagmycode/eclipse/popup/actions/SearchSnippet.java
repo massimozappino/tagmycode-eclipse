@@ -17,11 +17,11 @@ public class SearchSnippet extends TagMyCodeAction {
 	}
 
 	public void run(IAction action) {
-
-		final IEditorPart editorPart = getEditorPart();
         if (!getFramework().canOperate()) {
             return;
         }
+        
+		final IEditorPart editorPart = getEditorPart();
 		getFramework().showSearchDialog(createDocumentInsertText(editorPart));
 	}
 

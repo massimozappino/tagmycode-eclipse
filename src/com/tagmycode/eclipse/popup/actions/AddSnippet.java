@@ -14,18 +14,15 @@ public class AddSnippet extends TagMyCodeAction {
 	}
 
 	public void run(IAction action) {
-		IEditorPart editorPart = getEditorPart();
-
-		Snippet snippet = new Snippet();
-		snippet.setCode(getCode(editorPart));
-		snippet.setTitle(editorPart.getTitle());
-		if (getFramework() == null) {
-			System.out.println("NULLLLLL");
-			return;
-		}
         if (!getFramework().canOperate()) {
             return;
         }
+        
+		IEditorPart editorPart = getEditorPart();
+		Snippet snippet = new Snippet();
+		snippet.setCode(getCode(editorPart));
+		snippet.setTitle(editorPart.getTitle());
+		
 		getFramework().showSnippetDialog(snippet);
 
 	}
